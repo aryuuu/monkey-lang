@@ -1,8 +1,3 @@
-// #[derive(Debug)]
-// struct Token {
-//     Type: Type
-// }
-
 #[derive(Debug)]
 enum Token {
     Illegal,
