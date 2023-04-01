@@ -56,6 +56,7 @@ impl<'a> Iterator for Lexer<'a> {
     fn next(&mut self) -> Option<Self::Item> {
         self.skip_whitespace();
 
+        #[allow(clippy::never_loop)]
         loop {
             match self.read_char() {
                 Some(',') => return Some(Token::Comma),
@@ -119,7 +120,7 @@ impl<'a> Iterator for Lexer<'a> {
                     return Some(Token::Ident(str));
                 }
                 Some(_) => return Some(Token::Illegal),
-                _ => return None,
+                _ => return Some(Token::Eof),
             }
         }
     }
