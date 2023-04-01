@@ -12,6 +12,7 @@ pub enum Token {
     // Operators
     Assign,
     Plus,
+    Asterisk,
     Minus,
     Bang,
     Slash,
@@ -52,7 +53,6 @@ pub struct Lexer<'a> {
 
 impl<'a> Iterator for Lexer<'a> {
     type Item = Token;
-    // add code here
     fn next(&mut self) -> Option<Self::Item> {
         self.skip_whitespace();
 
@@ -68,6 +68,7 @@ impl<'a> Iterator for Lexer<'a> {
                 Some('/') => return Some(Token::Slash),
                 Some('+') => return Some(Token::Plus),
                 Some('-') => return Some(Token::Minus),
+                Some('*') => return Some(Token::Asterisk),
                 Some('!') => {
                     if let Some(c) = self.peek() {
                         if *c == '=' {
@@ -120,7 +121,7 @@ impl<'a> Iterator for Lexer<'a> {
                     return Some(Token::Ident(str));
                 }
                 Some(_) => return Some(Token::Illegal),
-                _ => return Some(Token::Eof),
+                _ => return None,
             }
         }
     }
@@ -175,6 +176,41 @@ mod tests {
 
         let lexer = Lexer::new(input);
         let result = lexer.into_iter().collect::<Vec<Token>>();
+        assert_eq!(result, expected_tokens);
+    }
+
+    #[test]
+    fn test_lexer_iterator_2() {
+        let input = "let five = 5;
+let ten = 10;
+fn foo(bar) { bar*1 }";
+
+        let expected_tokens = vec![
+            Token::Let,
+            Token::Ident("five".to_string()),
+            Token::Assign,
+            Token::Int(5),
+            Token::Semicolon,
+            Token::Let,
+            Token::Ident("ten".to_string()),
+            Token::Assign,
+            Token::Int(10),
+            Token::Semicolon,
+            Token::Function,
+            Token::Ident("foo".to_string()),
+            Token::LParen,
+            Token::Ident("bar".to_string()),
+            Token::RParen,
+            Token::LBrace,
+            Token::Ident("bar".to_string()),
+            Token::Asterisk,
+            Token::Int(1),
+            Token::RBrace,
+        ];
+
+        let lexer = Lexer::new(input);
+        let result = lexer.into_iter().collect::<Vec<Token>>();
+
         assert_eq!(result, expected_tokens);
     }
 }
