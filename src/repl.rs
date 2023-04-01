@@ -2,24 +2,30 @@ use std::io::stdout;
 use std::io::{self, Write};
 
 use crate::token::{Lexer, Token};
-// loop
-// take input from user until new line
-// generate tokens
-// print tokens
 
-pub fn start() {
-    loop {
-        print!("mon >>: ");
+#[derive(Debug)]
+pub struct Repl {}
 
-        let mut input = String::new();
-        match io::stdin().read_line(&mut input) {
-            Ok(_) => {
-                let lexer = Lexer::new(&input);
-                let result = lexer.into_iter().collect::<Vec<Token>>();
-                println!("{:?}", result);
+impl Repl {
+    pub fn start() {
+        loop {
+            print!("mon >>: ");
+            stdout().flush().unwrap();
+
+            let mut input = String::new();
+            match io::stdin().read_line(&mut input) {
+                Ok(_) => {
+                    let lexer = Lexer::new(&input);
+                    let result = lexer.into_iter().collect::<Vec<Token>>();
+                    println!("{:?}", result);
+                }
+                Err(error) => println!("error: {}", error),
             }
-            Err(error) => println!("error: {}", error),
+            stdout().flush().unwrap();
         }
-        stdout().flush().unwrap();
+    }
+
+    fn print_tokens(tokens: Vec<Token>) {
+        unimplemented!()
     }
 }
